@@ -113,6 +113,12 @@ namespace Tests {
     delete group;
   }
 
+  /**
+   * This is a RoundTest that sets up a round and then has each
+   * node make a callback to a function that takes a Session pointer
+   * as an argument. This is useful for booting up a node and then
+   * using it to testi SessionWebService objects.
+   */
   void RoundTest_Basic_SessionTest(CreateSessionCallback callback, CreateGroupGenerator cgg,
         SessionTestCallback session_cb)
   {

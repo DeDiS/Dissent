@@ -112,13 +112,13 @@ int main(int argc, char **argv)
         get_next_message_sp.data(), SLOT(HandleIncomingMessage(const QByteArray&)));
     ws->AddRoute(HttpRequest::METHOD_HTTP_GET, "/session/messages/next", get_next_message_sp);
 
-    QSharedPointer<RoundIdService> round_id_sp(new RoundIdService(nodes[0]));
+    QSharedPointer<RoundIdService> round_id_sp(new RoundIdService(nodes[0]->session));
     ws->AddRoute(HttpRequest::METHOD_HTTP_GET, "/round/id", round_id_sp);
 
-    QSharedPointer<SessionIdService> session_id_sp(new SessionIdService(nodes[0]));
+    QSharedPointer<SessionIdService> session_id_sp(new SessionIdService(nodes[0]->session));
     ws->AddRoute(HttpRequest::METHOD_HTTP_GET, "/session/id", session_id_sp);
 
-    QSharedPointer<SendMessageService> send_message_sp(new SendMessageService(nodes[0]));
+    QSharedPointer<SendMessageService> send_message_sp(new SendMessageService(nodes[0]->session));
     ws->AddRoute(HttpRequest::METHOD_HTTP_POST, "/session/send", send_message_sp);
 
     ws->Start();

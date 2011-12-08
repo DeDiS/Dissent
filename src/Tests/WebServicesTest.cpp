@@ -125,18 +125,15 @@ namespace Tests {
     ASSERT_EQ(data1, map["message"].toByteArray());
   }
 
-  void RoundIdServiceTest(QSharedPointer<Session> sessionp) 
+  void SessionServiceActiveTestWrapper(QSharedPointer<WebService> wsp, int expected_id_len) 
   {
-    ASSERT_TRUE(!sessionp.isNull());
-
     WebServiceTestSink sink;
     ASSERT_EQ(sink.handled.count(), 0);
 
-    RoundIdService rid(sessionp);
-    QObject::connect(&rid, SIGNAL(FinishedWebRequest(QSharedPointer<WebRequest>)),
+    QObject::connect(wsp.data(), SIGNAL(FinishedWebRequest(QSharedPointer<WebRequest>)),
        &sink, SLOT(HandleDoneRequest(QSharedPointer<WebRequest>)));
    
-    rid.Call(FakeRequest());
+    wsp->Call(FakeRequest());
     ASSERT_EQ(sink.handled.count(), 1);
     ASSERT_EQ(HttpResponse::STATUS_OK, sink.handled[0]->GetStatus());
     
@@ -146,7 +143,41 @@ namespace Tests {
     ASSERT_TRUE(map["active"].canConvert(QVariant::Bool));
     ASSERT_TRUE(map["active"].toBool());
     ASSERT_TRUE(map["id"].canConvert(QVariant::ByteArray));
-    ASSERT_EQ(4, map["id"].toByteArray().length());
+    ASSERT_EQ(expected_id_len, map["id"].toByteArray().length());
+    
+    QObject::disconnect(wsp.data(), SIGNAL(FinishedWebRequest(QSharedPointer<WebRequest>)),
+       &sink, SLOT(HandleDoneRequest(QSharedPointer<WebRequest>)));
+  }
+
+  void SessionServiceInactiveTestWrapper(QSharedPointer<WebService> wsp) {
+    WebServiceTestSink sink;
+    ASSERT_EQ(sink.handled.count(), 0);
+
+    QObject::connect(wsp.data(), SIGNAL(FinishedWebRequest(QSharedPointer<WebRequest>)),
+       &sink, SLOT(HandleDoneRequest(QSharedPointer<WebRequest>)));
+   
+    wsp->Call(FakeRequest());
+    ASSERT_EQ(sink.handled.count(), 1);
+    ASSERT_EQ(HttpResponse::STATUS_OK, sink.handled[0]->GetStatus());
+    
+    QVariant var = sink.handled[0]->GetOutputData();
+    ASSERT_TRUE(var.canConvert(QVariant::Map));
+    QMap<QString,QVariant> map = var.toMap();
+    ASSERT_TRUE(map["active"].canConvert(QVariant::Bool));
+    ASSERT_FALSE(map["active"].toBool());
+    ASSERT_TRUE(map["id"].canConvert(QVariant::ByteArray));
+    ASSERT_EQ(0, map["id"].toByteArray().length());
+    
+    QObject::disconnect(wsp.data(), SIGNAL(FinishedWebRequest(QSharedPointer<WebRequest>)),
+       &sink, SLOT(HandleDoneRequest(QSharedPointer<WebRequest>)));
+
+  }
+
+  void RoundIdServiceTest(QSharedPointer<Session> sessionp) 
+  {
+    ASSERT_TRUE(!sessionp.isNull());
+    QSharedPointer<RoundIdService> ridp(new RoundIdService(sessionp));
+    SessionServiceActiveTestWrapper(ridp, 4);
   }
 
   TEST(WebServices, RoundIdServiceActive)
@@ -155,28 +186,18 @@ namespace Tests {
       &RoundIdServiceTest);
   }
 
+  TEST(WebServices, RoundIdServiceInactive)
+  {
+    QSharedPointer<Session> sp;
+    QSharedPointer<RoundIdService> ridp(new RoundIdService(sp));
+    SessionServiceInactiveTestWrapper(ridp);
+  }
+
   void SessionIdServiceTest(QSharedPointer<Session> sessionp) 
   {
     ASSERT_TRUE(!sessionp.isNull());
-
-    WebServiceTestSink sink;
-    ASSERT_EQ(sink.handled.count(), 0);
-
-    SessionIdService sessid(sessionp);
-    QObject::connect(&sessid, SIGNAL(FinishedWebRequest(QSharedPointer<WebRequest>)),
-       &sink, SLOT(HandleDoneRequest(QSharedPointer<WebRequest>)));
-   
-    sessid.Call(FakeRequest());
-    ASSERT_EQ(sink.handled.count(), 1);
-    ASSERT_EQ(HttpResponse::STATUS_OK, sink.handled[0]->GetStatus());
-    
-    QVariant var = sink.handled[0]->GetOutputData();
-    ASSERT_TRUE(var.canConvert(QVariant::Map));
-    QMap<QString,QVariant> map = var.toMap();
-    ASSERT_TRUE(map["active"].canConvert(QVariant::Bool));
-    ASSERT_TRUE(map["active"].toBool());
-    ASSERT_TRUE(map["id"].canConvert(QVariant::ByteArray));
-    ASSERT_EQ(28, map["id"].toByteArray().length());
+    QSharedPointer<SessionIdService> sisp(new SessionIdService(sessionp));
+    SessionServiceActiveTestWrapper(sisp, 28);
   }
 
   TEST(WebServices, SessionIdServiceActive)
@@ -185,34 +206,31 @@ namespace Tests {
       &SessionIdServiceTest);
   }
 
+  TEST(WebServices, SessionIdServiceInactive)
+  {
+    QSharedPointer<Session> sp;
+    QSharedPointer<SessionIdService> sisp(new SessionIdService(sp));
+    SessionServiceInactiveTestWrapper(sisp);
+  }
+
   void SendMessageServiceTest(QSharedPointer<Session> sessionp) 
   {
     ASSERT_TRUE(!sessionp.isNull());
-
-    WebServiceTestSink sink;
-    ASSERT_EQ(sink.handled.count(), 0);
-
-    SendMessageService sms(sessionp);
-    QObject::connect(&sms, SIGNAL(FinishedWebRequest(QSharedPointer<WebRequest>)),
-       &sink, SLOT(HandleDoneRequest(QSharedPointer<WebRequest>)));
-   
-    sms.Call(FakeRequest());
-    ASSERT_EQ(sink.handled.count(), 1);
-    ASSERT_EQ(HttpResponse::STATUS_OK, sink.handled[0]->GetStatus());
-    
-    QVariant var = sink.handled[0]->GetOutputData();
-    ASSERT_TRUE(var.canConvert(QVariant::Map));
-    QMap<QString,QVariant> map = var.toMap();
-    ASSERT_TRUE(map["active"].canConvert(QVariant::Bool));
-    ASSERT_TRUE(map["active"].toBool());
-    ASSERT_TRUE(map["id"].canConvert(QVariant::ByteArray));
-    ASSERT_EQ(28, map["id"].toByteArray().length());
+    QSharedPointer<SendMessageService> smsp(new SendMessageService(sessionp));
+    SessionServiceActiveTestWrapper(smsp, 28);
   }
 
   TEST(WebServices, SendMessageServiceActive)
   {
     RoundTest_Basic_SessionTest(&TCreateSession<ShuffleRound>, &GroupGenerator::Create,
       &SendMessageServiceTest);
+  }
+
+  TEST(WebServices, SendMessageServiceInactive)
+  {
+    QSharedPointer<Session> sp;
+    QSharedPointer<SendMessageService> smsp(new SendMessageService(sp));
+    SessionServiceInactiveTestWrapper(smsp);
   }
 }
 }
