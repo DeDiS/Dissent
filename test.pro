@@ -68,4 +68,6 @@ SOURCES += ext/googletest/src/gtest-all.cc \
            src/Tests/SerializationTest.cpp \
            src/Tests/BulkRoundTest.cpp \
            src/Tests/RepeatingBulkRoundTest.cpp \
-           src/Tests/TrustedBulkRoundTest.cpp
+           src/Tests/TrustedBulkRoundTest.cpp \
+           src/Tests/PackagersTest.cpp \
+           src/Tests/HttpRequestTest.cpp
