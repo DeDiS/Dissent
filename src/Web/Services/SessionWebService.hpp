@@ -3,7 +3,6 @@
 
 #include <QSharedPointer>
 
-#include "../../Applications/Node.hpp"
 #include "../../Anonymity/Session.hpp"
 
 #include "WebService.hpp"
@@ -16,20 +15,19 @@ namespace Services {
    */
   class SessionWebService : public WebService {
     public:
-      typedef Dissent::Applications::Node Node;
       typedef Dissent::Anonymity::Session Session;
 
-      SessionWebService(QSharedPointer<Node> node) : _node(node) {}
+      SessionWebService(QSharedPointer<Session> session) : _session(session) {}
       virtual ~SessionWebService() {}
 
     protected:
       /**
        * Return the monitored session
        */
-      QSharedPointer<Session> GetSession() { return _node->session; }
+      QSharedPointer<Session> GetSession() { return _session; }
 
     private:
-      QSharedPointer<Node> _node;
+      QSharedPointer<Session> _session;
   };
 }
 }

@@ -3,8 +3,8 @@
 namespace Dissent {
 namespace Web {
 namespace Services {
-  SendMessageService::SendMessageService(QSharedPointer<Node> node) :
-    SessionWebService(node)
+  SendMessageService::SendMessageService(QSharedPointer<Session> session) :
+    SessionWebService(session)
   {
   }
 
@@ -14,10 +14,10 @@ namespace Services {
     QVariantMap map;
 
     if(session.isNull()) {
-      map["session"] = false;
+      map["active"] = false;
       map["id"] = "";
     } else {
-      map["session"] = true;
+      map["active"] = true;
       map["id"] = session->GetId().ToString();
 
       QByteArray bytes = wrp->GetRequest().GetBody().toUtf8();

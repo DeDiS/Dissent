@@ -35,6 +35,9 @@ namespace Tests {
   {
     QTcpSocket *socketp = new QTcpSocket();
     QSharedPointer<WebRequest> wrp(new WebRequest(socketp));
+
+    QByteArray data = "POST /session/send HTTP/1.1\r\n\r\nHello!";
+    wrp->GetRequest().ParseRequest(data);
     return wrp;
   }
 
@@ -51,14 +54,14 @@ namespace Tests {
 
     ASSERT_EQ(sink.handled.count(), 0);
 
-    gsm.Handle(FakeRequest());
+    gsm.Call(FakeRequest());
     ASSERT_EQ(sink.handled.count(), 1);
     ASSERT_EQ(HttpResponse::STATUS_OK, sink.handled[0]->GetStatus());
 
     gsm.HandleIncomingMessage(data1);
     ASSERT_EQ(sink.handled.count(), 1);
     
-    gsm.Handle(FakeRequest());
+    gsm.Call(FakeRequest());
     ASSERT_EQ(sink.handled.count(), 2);
     ASSERT_EQ(HttpResponse::STATUS_OK, sink.handled[1]->GetStatus());
 
@@ -72,7 +75,7 @@ namespace Tests {
     gsm.HandleIncomingMessage(data2);
     ASSERT_EQ(sink.handled.count(), 2);
     
-    gsm.Handle(FakeRequest());
+    gsm.Call(FakeRequest());
     ASSERT_EQ(sink.handled.count(), 3);
     ASSERT_EQ(HttpResponse::STATUS_OK, sink.handled[2]->GetStatus());
 
@@ -96,7 +99,7 @@ namespace Tests {
 
     ASSERT_EQ(sink.handled.count(), 0);
 
-    gnm.Handle(FakeRequest());
+    gnm.Call(FakeRequest());
     ASSERT_EQ(sink.handled.count(), 0);
 
     gnm.HandleIncomingMessage(data1);
@@ -109,7 +112,7 @@ namespace Tests {
     ASSERT_TRUE(map["message"].canConvert(QVariant::ByteArray));
     ASSERT_EQ(data1, map["message"].toByteArray());
 
-    gnm.Handle(FakeRequest());
+    gnm.Call(FakeRequest());
     ASSERT_EQ(sink.handled.count(), 1);
 
     gnm.HandleIncomingMessage(data2);
@@ -133,7 +136,7 @@ namespace Tests {
     QObject::connect(&rid, SIGNAL(FinishedWebRequest(QSharedPointer<WebRequest>)),
        &sink, SLOT(HandleDoneRequest(QSharedPointer<WebRequest>)));
    
-    rid.Handle(FakeRequest());
+    rid.Call(FakeRequest());
     ASSERT_EQ(sink.handled.count(), 1);
     ASSERT_EQ(HttpResponse::STATUS_OK, sink.handled[0]->GetStatus());
     
@@ -142,8 +145,8 @@ namespace Tests {
     QMap<QString,QVariant> map = var.toMap();
     ASSERT_TRUE(map["active"].canConvert(QVariant::Bool));
     ASSERT_TRUE(map["active"].toBool());
-    ASSERT_TRUE(map["id"].canConvert(QVariant::String));
-    ASSERT_EQ("ABC", map["id"].toString());
+    ASSERT_TRUE(map["id"].canConvert(QVariant::ByteArray));
+    ASSERT_EQ(4, map["id"].toByteArray().length());
   }
 
   TEST(WebServices, RoundIdServiceActive)
@@ -152,5 +155,64 @@ namespace Tests {
       &RoundIdServiceTest);
   }
 
+  void SessionIdServiceTest(QSharedPointer<Session> sessionp) 
+  {
+    ASSERT_TRUE(!sessionp.isNull());
+
+    WebServiceTestSink sink;
+    ASSERT_EQ(sink.handled.count(), 0);
+
+    SessionIdService sessid(sessionp);
+    QObject::connect(&sessid, SIGNAL(FinishedWebRequest(QSharedPointer<WebRequest>)),
+       &sink, SLOT(HandleDoneRequest(QSharedPointer<WebRequest>)));
+   
+    sessid.Call(FakeRequest());
+    ASSERT_EQ(sink.handled.count(), 1);
+    ASSERT_EQ(HttpResponse::STATUS_OK, sink.handled[0]->GetStatus());
+    
+    QVariant var = sink.handled[0]->GetOutputData();
+    ASSERT_TRUE(var.canConvert(QVariant::Map));
+    QMap<QString,QVariant> map = var.toMap();
+    ASSERT_TRUE(map["active"].canConvert(QVariant::Bool));
+    ASSERT_TRUE(map["active"].toBool());
+    ASSERT_TRUE(map["id"].canConvert(QVariant::ByteArray));
+    ASSERT_EQ(28, map["id"].toByteArray().length());
+  }
+
+  TEST(WebServices, SessionIdServiceActive)
+  {
+    RoundTest_Basic_SessionTest(&TCreateSession<ShuffleRound>, &GroupGenerator::Create,
+      &SessionIdServiceTest);
+  }
+
+  void SendMessageServiceTest(QSharedPointer<Session> sessionp) 
+  {
+    ASSERT_TRUE(!sessionp.isNull());
+
+    WebServiceTestSink sink;
+    ASSERT_EQ(sink.handled.count(), 0);
+
+    SendMessageService sms(sessionp);
+    QObject::connect(&sms, SIGNAL(FinishedWebRequest(QSharedPointer<WebRequest>)),
+       &sink, SLOT(HandleDoneRequest(QSharedPointer<WebRequest>)));
+   
+    sms.Call(FakeRequest());
+    ASSERT_EQ(sink.handled.count(), 1);
+    ASSERT_EQ(HttpResponse::STATUS_OK, sink.handled[0]->GetStatus());
+    
+    QVariant var = sink.handled[0]->GetOutputData();
+    ASSERT_TRUE(var.canConvert(QVariant::Map));
+    QMap<QString,QVariant> map = var.toMap();
+    ASSERT_TRUE(map["active"].canConvert(QVariant::Bool));
+    ASSERT_TRUE(map["active"].toBool());
+    ASSERT_TRUE(map["id"].canConvert(QVariant::ByteArray));
+    ASSERT_EQ(28, map["id"].toByteArray().length());
+  }
+
+  TEST(WebServices, SendMessageServiceActive)
+  {
+    RoundTest_Basic_SessionTest(&TCreateSession<ShuffleRound>, &GroupGenerator::Create,
+      &SendMessageServiceTest);
+  }
 }
 }

@@ -3,8 +3,8 @@
 namespace Dissent {
 namespace Web {
 namespace Services {
-  RoundIdService::RoundIdService(QSharedPointer<Node> node) :
-    SessionWebService(node)
+  RoundIdService::RoundIdService(QSharedPointer<Session> session) :
+    SessionWebService(session)
   {
   }
 
