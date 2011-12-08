@@ -47,7 +47,7 @@ namespace Web {
 
   QString HttpResponse::GetBody()
   {
-    if(!_body.isEmpty()) {
+    if(!_body.isEmpty() || _status_code == STATUS_OK) {
       return _body;
     } 
     

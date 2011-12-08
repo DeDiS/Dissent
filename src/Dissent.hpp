@@ -96,6 +96,21 @@
 #include "Utils/Triggerable.hpp"
 #include "Utils/Triple.hpp"
 
+#include "Web/HttpRequest.hpp"
+#include "Web/HttpResponse.hpp"
+#include "Web/WebRequest.hpp"
+#include "Web/WebServer.hpp"
+#include "Web/Packagers/Packager.hpp"
+#include "Web/Packagers/JsonPackager.hpp"
+#include "Web/Services/GetNextMessageService.hpp"
+#include "Web/Services/GetMessagesService.hpp"
+#include "Web/Services/MessageWebService.hpp"
+#include "Web/Services/RoundIdService.hpp"
+#include "Web/Services/SendMessageService.hpp"
+#include "Web/Services/SessionIdService.hpp"
+#include "Web/Services/SessionWebService.hpp"
+#include "Web/Services/WebService.hpp"
+
 using namespace Dissent::Anonymity;
 using namespace Dissent::Applications;
 using namespace Dissent::Crypto;
@@ -104,6 +119,9 @@ using namespace Dissent::Messaging;
 using namespace Dissent::Overlay;
 using namespace Dissent::Transports;
 using namespace Dissent::Utils;
+using namespace Dissent::Web;
+using namespace Dissent::Web::Services;
+using namespace Dissent::Web::Packagers;
 
 #include "Web/HttpRequest.hpp"
 #include "Web/HttpResponse.hpp"

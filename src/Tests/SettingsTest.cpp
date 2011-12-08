@@ -37,6 +37,7 @@ namespace Tests {
 
   TEST(Settings, HostAddress)
   {
+<<<<<<< HEAD
     Id id;
     QFile file("dissent.ini");
     file.remove();
@@ -52,6 +53,26 @@ namespace Tests {
 
     settings.WebServerPort = -1;
     EXPECT_FALSE(settings.IsValid());
+=======
+    Settings settings;
+
+    settings.LocalEndPoints.append(QUrl("buffer://5"));
+    EXPECT_TRUE(settings.IsValid());
+
+    settings.WebServer = true;
+
+    settings.WebServerUrl = "xyz://127.1.34.1:-y";
+    EXPECT_FALSE(settings.IsValid());
+
+    settings.WebServerUrl = "xyz://127.1.34.1:8080";
+    EXPECT_TRUE(settings.IsValid());
+
+    settings.WebServerUrl = "http://127.1.34.1:-1";
+    EXPECT_FALSE(settings.IsValid());
+
+    settings.WebServerUrl = "http://127.1.34.1:8888";
+    EXPECT_TRUE(settings.IsValid());
+>>>>>>> davidiw/master
   }
 }
 }
