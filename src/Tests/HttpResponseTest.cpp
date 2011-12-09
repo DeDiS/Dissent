@@ -60,7 +60,7 @@ namespace Tests {
 
     resp.WriteToStream(os);
 
-    QString error_body = "<html><h1>Not Found</h1></html>";
+    QString error_body = "<html><body><h1>404: Not Found</h1></body></html>";
 
     ASSERT_EQ(QString("HTTP/1.1 404 Not Found\r\n"
               "X-MyHeader: 123\r\n"
