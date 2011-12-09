@@ -8,6 +8,11 @@ namespace Services {
   {
   }
 
+  SendMessageService::SendMessageService(QSharedPointer<Node> node) :
+    SessionWebService(node)
+  {
+  }
+
   void SendMessageService::Handle(QSharedPointer<WebRequest> wrp)
   {
     QSharedPointer<Session> session = GetSession();

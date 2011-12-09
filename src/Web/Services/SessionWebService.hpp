@@ -3,7 +3,7 @@
 
 #include <QSharedPointer>
 
-#include "../../Anonymity/Session.hpp"
+#include "../../Applications/Node.hpp"
 
 #include "WebService.hpp"
 
@@ -16,17 +16,27 @@ namespace Services {
   class SessionWebService : public WebService {
     public:
       typedef Dissent::Anonymity::Session Session;
+      typedef Dissent::Applications::Node Node;
 
+      /* 
+       * Having two constructors here is a hack. Sometimes the session is
+       * not set up when we want to instantiate a service -- in those cases
+       * we pass in the Node. Other times (in Test), the Node is not easy to
+       * fake, so we use Session.
+       */
       SessionWebService(QSharedPointer<Session> session) : _session(session) {}
+      SessionWebService(QSharedPointer<Node> node) : _node(node) {}
+
       virtual ~SessionWebService() {}
 
     protected:
       /**
        * Return the monitored session
        */
-      QSharedPointer<Session> GetSession() { return _session; }
+      QSharedPointer<Session> GetSession() { return (_session.isNull() ? _node->session : _session); }
 
     private:
+      QSharedPointer<Node> _node;
       QSharedPointer<Session> _session;
   };
 }

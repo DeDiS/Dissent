@@ -8,6 +8,11 @@ namespace Services {
   {
   }
 
+  RoundIdService::RoundIdService(QSharedPointer<Node> node) :
+    SessionWebService(node)
+  {
+  }
+
   void RoundIdService::Handle(QSharedPointer<WebRequest> wrp)
   {
     QSharedPointer<Session> session = GetSession();
