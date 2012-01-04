@@ -33,7 +33,7 @@ namespace Anonymity {
 
       static QByteArray Xor(const QByteArray &first, const QByteArray &second);
 
-      QSharedPointer<Library> _library;
+      Library* _library;
       QSharedPointer<Random> _random;
 
   };
