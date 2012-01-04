@@ -283,6 +283,15 @@ namespace Anonymity {
       void ProcessMessages();
 
       /**
+       * Parse the clear text message returning back the entry if the contents
+       * are valid
+       * @param cleartext the entire cleartext array
+       * @param member_idx the anonymous owners index
+       * @returns the cleartext message
+       */
+      QByteArray ProcessMessage(const QByteArray &cleartext, uint member_idx);
+
+      /**
        * Prepares the local members cleartext message
        * returns the local members cleartext message
        */
@@ -297,15 +306,6 @@ namespace Anonymity {
        * Generates the server's entire xor message
        */
       virtual QByteArray GenerateServerXorMessage();
-      
-      /**
-       * Parse the clear text message returning back the entry if the contents
-       * are valid
-       * @param cleartext the entire cleartext array
-       * @param member_idx the anonymous owners index
-       * @returns the cleartext message
-       */
-      QByteArray ProcessMessage(const QByteArray &cleartext, uint member_idx);
 
       /**
        * Copy all received messages to the message history data structure
