@@ -31,8 +31,9 @@ namespace Crypto {
        * @param value the byte array
        */
       explicit CppIntegerData(const QByteArray &byte_array) :
-        _integer(reinterpret_cast<const byte *>(byte_array.constData()),
-            byte_array.size())
+        IntegerData(byte_array),
+        _integer(reinterpret_cast<const byte *>(GetByteArray().constData()),
+            GetByteArray().size())
       {
       }
 
@@ -40,17 +41,25 @@ namespace Crypto {
        * Construct using a string
        * @param value the string
        */
-      explicit CppIntegerData(const QString &string)
+      explicit CppIntegerData(const QString &_string) :
+        IntegerData(_string), 
+        _integer(reinterpret_cast<const byte *>(GetByteArray().constData()),
+            GetByteArray().size())
       {
-        QByteArray data = ToBase64(string);
-        _integer = CryptoPP::Integer(
-            reinterpret_cast<const byte *>(data.constData()), data.size());
       }
 
       /**
        * Destructor
        */
       virtual ~CppIntegerData() {}
+
+      /**
+       * Returns a copy of the underlying integer
+       */
+      const CryptoPP::Integer GetCryptoInteger() const
+      {
+        return _integer;
+      }
 
       /**
        * Add operator, produces a new Integer
