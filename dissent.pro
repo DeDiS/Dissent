@@ -18,6 +18,7 @@ HEADERS += ext/joyent-http-parser/http_parser.h \
            src/Anonymity/Credentials.hpp \
            src/Anonymity/Group.hpp \
            src/Anonymity/Log.hpp \
+           src/Anonymity/MessageRandomizer.hpp \
            src/Anonymity/NullRound.hpp \
            src/Anonymity/RepeatingBulkRound.hpp \
            src/Anonymity/Round.hpp \
@@ -26,7 +27,13 @@ HEADERS += ext/joyent-http-parser/http_parser.h \
            src/Anonymity/ShuffleBlamer.hpp \
            src/Anonymity/ShuffleRound.hpp \
            src/Anonymity/ShuffleRoundBlame.hpp \
+           src/Anonymity/TolerantBulkRound.hpp \
            src/Anonymity/TrustedBulkRound.hpp \
+           src/Anonymity/Blame/Accusation.hpp \
+           src/Anonymity/Blame/AlibiData.hpp \
+           src/Anonymity/Blame/BlameMatrix.hpp \
+           src/Anonymity/Blame/Conflict.hpp \
+           src/Anonymity/Blame/MessageHistory.hpp \
            src/Applications/CommandLine.hpp \
            src/Applications/ConsoleSink.hpp \
            src/Applications/FileSink.hpp \
@@ -122,6 +129,7 @@ SOURCES += ext/joyent-http-parser/http_parser.c \
            src/Anonymity/BulkRound.cpp \
            src/Anonymity/Group.cpp \
            src/Anonymity/Log.cpp \
+           src/Anonymity/MessageRandomizer.cpp \
            src/Anonymity/NullRound.cpp \
            src/Anonymity/RepeatingBulkRound.cpp \
            src/Anonymity/Round.cpp \
@@ -130,7 +138,12 @@ SOURCES += ext/joyent-http-parser/http_parser.c \
            src/Anonymity/ShuffleBlamer.cpp \
            src/Anonymity/ShuffleRound.cpp \
            src/Anonymity/ShuffleRoundBlame.cpp \
+           src/Anonymity/TolerantBulkRound.cpp \
            src/Anonymity/TrustedBulkRound.cpp \
+           src/Anonymity/Blame/Accusation.cpp \
+           src/Anonymity/Blame/AlibiData.cpp \
+           src/Anonymity/Blame/BlameMatrix.cpp \
+           src/Anonymity/Blame/MessageHistory.cpp \
            src/Applications/CommandLine.cpp \
            src/Applications/ConsoleSink.cpp \
            src/Applications/FileSink.cpp \
