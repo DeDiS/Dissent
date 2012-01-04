@@ -143,6 +143,11 @@ namespace Anonymity {
       virtual bool Start();
 
       /**
+       * Stop the round because a bad member was found
+       */
+      void FoundBadMembers();
+
+      /**
        * Handle a data message from a remote peer
        * @param notification message from a remote peer
        */
