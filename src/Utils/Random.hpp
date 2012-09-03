@@ -62,6 +62,11 @@ namespace Utils {
        */
       void MoveRngPosition(uint index);
 
+      /**
+       * Set the byte count to zero
+       */
+      inline void ResetByteCount() { _byte_count = 0; }
+
     private:
       uint _seed;
       uint _byte_count;

@@ -64,9 +64,11 @@ namespace Anonymity {
 
   void Xor(QByteArray &dst, const QByteArray &t1, const QByteArray &t2)
   {
-    /// @todo use qint64 or qint32 depending on architecture
-    int count = std::min(dst.size(), t1.size());
-    count = std::min(count, t2.size());
+    if(dst.size() != t1.size() || t1.size() != t2.size()) {
+      qFatal("Cannot XOR strings of unequal length");
+    }
+
+    int count = dst.size();
 
     for(int idx = 0; idx < count; idx++) {
       dst[idx] = t1[idx] ^ t2[idx];

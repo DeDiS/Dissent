@@ -1,14 +1,20 @@
 #include "DissentTest.hpp"
 
+#include <QStringList>
+
 namespace Dissent {
 namespace Tests {
   TEST(Settings, Basic)
   {
     Id id;
+
+    QStringList args; 
+    args << "./dissent" << "dissent.ini";
+
     QFile file("dissent.ini");
     file.remove();
 
-    Settings settings("dissent.ini", false);
+    Settings settings(args, false);
     EXPECT_EQ(settings.LocalEndPoints.count(), 0);
     EXPECT_EQ(settings.RemotePeers.count(), 0);
     settings.LocalEndPoints.append(QUrl("buffer://5"));
@@ -17,7 +23,7 @@ namespace Tests {
     settings.LocalIds.append(id);
     settings.Save();
 
-    Settings settings0("dissent.ini", false);
+    Settings settings0(args, false);
     EXPECT_EQ(settings0.LocalEndPoints.count(), 1);
     EXPECT_EQ(settings0.RemotePeers.count(), 1);
     EXPECT_EQ(settings0.LocalEndPoints[0], QUrl("buffer://5"));
@@ -96,7 +102,7 @@ namespace Tests {
     settings.LeaderId = Id();
     EXPECT_TRUE(settings.IsValid());
 
-    settings.WebServer = true;
+    settings.Mode = Settings::Mode_WebServer;
 
     settings.WebServerUrl = "xyz://127.1.34.1:-y";
     EXPECT_FALSE(settings.IsValid());
@@ -110,5 +116,34 @@ namespace Tests {
     settings.WebServerUrl = "http://127.1.34.1:8888";
     EXPECT_TRUE(settings.IsValid());
   }
+
+  TEST(Settings, CommandLine)
+  {
+    Id id;
+
+    QStringList args; 
+    args << "/path/to/dissent" 
+      << "--mode=console" 
+      << "--endpoints=tcp://1234" 
+      << "--mode=local_tunnel"
+      << "--mode=web_server"
+      << "--mode=console"
+      << "--web_server_url=http://www.google.com/"
+      << "dissent.ini";
+
+    QFile file("dissent.ini");
+    file.remove();
+
+    Settings settings(args, false);
+    EXPECT_EQ(1, settings.LocalEndPoints.count());
+    EXPECT_EQ(0, settings.RemotePeers.count());
+    EXPECT_EQ(Settings::Mode_Console, settings.Mode);
+    EXPECT_EQ(QUrl("http://www.google.com/"), settings.WebServerUrl);
+    settings.LocalEndPoints.append(QUrl("buffer://5"));
+    settings.RemotePeers.append(QUrl("buffer://6"));
+    settings.LocalId = id;
+    settings.Save();
+  }
+
 }
 }

@@ -33,6 +33,8 @@ namespace Crypto {
     _rng = QSharedPointer<CryptoPP::RandomNumberGenerator>(
         new CryptoPP::X917RNG(bt, zerob, zerob));
 
+    ResetByteCount();
+
     if(index) {
       MoveRngPosition(index);
     }

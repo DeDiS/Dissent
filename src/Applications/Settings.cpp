@@ -18,6 +18,15 @@ namespace Applications {
     _use_file(false),
     _settings(new QSettings())
   {
+    QStringList valid_flags;
+    valid_flags 
+      << ParamNameMode 
+      << ParamNameRemotePeers << ParamNameEndpoints << ParamNameDemoMode << ParamNameLocalNodes 
+      << ParamNameSessionType << ParamNameSubgroupPolicy << ParamNameLog 
+      << ParamNameMultithreading << ParamNameLocalId << ParamNameLeaderId 
+      << ParamNameWebServerUrl << ParamNameEntryTunnelUrl << ParamNameSuperPeer
+      << ParamNameExitTunnelProxyUrl;
+
     Init();
   }
 
@@ -177,6 +186,23 @@ namespace Applications {
   {
     IsValid();
     return _reason;
+  }
+
+  void Settings::ParseUrlType(const QSettings &settings, 
+      const QString &param_name, const QString &scheme, QUrl &target)
+  {
+    if(settings.contains(param_name)) {
+      QString url = settings.value(param_name).toString();
+      target = QUrl(url);
+      if(target.toString() != url) {
+        target = QUrl();
+      }
+
+      QString s = target.scheme();
+      if(s != scheme) {
+        target = QUrl();
+      }
+    }
   }
 
   void Settings::ParseUrlList(const QString &name, const QVariant &values,
