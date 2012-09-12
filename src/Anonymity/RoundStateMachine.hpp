@@ -85,6 +85,7 @@ namespace Anonymity {
       void AddTransition(int from, int to)
       {
         if(_state_transitions.contains(from)) {
+          qWarning() << "Machine already has transition from state" << StateToString(from);
           qFatal("A state cannot transition to more than one state.");
         }
 

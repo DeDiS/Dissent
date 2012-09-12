@@ -13,9 +13,9 @@ using Messaging::RequestHandler;
 
 namespace Connections {
   bool ConnectionManager::UseTimer = true;
-  const int ConnectionManager::TimeBetweenEdgeCheck = 10000;
-  const int ConnectionManager::EdgeCheckTimeout = 30000;
-  const int ConnectionManager::EdgeCloseTimeout = 60000;
+  const int ConnectionManager::TimeBetweenEdgeCheck = 60000;
+  const int ConnectionManager::EdgeCheckTimeout = 90000;
+  const int ConnectionManager::EdgeCloseTimeout = 120000;
 
   ConnectionManager::ConnectionManager(const Id &local_id,
       const QSharedPointer<RpcHandler> &rpc) :

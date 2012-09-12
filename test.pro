@@ -10,6 +10,7 @@ INCLUDEPATH += src \
 #DEFINES += QT_NO_DEBUG_OUTPUT
 #DEFINES += QT_NO_WARNING_OUTPUT
 DEFINES += DISSENT_TEST
+#DEFINES += PBC_DEBUG
 
 # Input
 HEADERS += ext/googletest/include/gtest/gtest-death-test.h \
@@ -32,6 +33,7 @@ HEADERS += ext/googletest/include/gtest/gtest-death-test.h \
            ext/googletest/include/gtest/internal/gtest-string.h \
            ext/googletest/include/gtest/internal/gtest-tuple.h \
            ext/googletest/include/gtest/internal/gtest-type-util.h \
+           src/Tests/AbstractGroupHelpers.hpp \
            src/Tests/BadCSBulkRound.hpp \
            src/Tests/BulkRoundHelpers.hpp \
            src/Tests/DissentTest.hpp \
@@ -52,8 +54,14 @@ SOURCES += ext/googletest/src/gtest-all.cc \
            src/Tests/AuthenticateTest.cpp \
            src/Tests/Base64.cpp \
            src/Tests/BasicGossipTest.cpp \
+           src/Tests/BlogDropTest.cpp \
+           src/Tests/BlogDropProof.cpp \
+           src/Tests/BlogDropUtilsTest.cpp \
+           src/Tests/BlogDropRoundTest.cpp \
            src/Tests/BulkRoundTest.cpp \
+           src/Tests/ByteGroupTest.cpp \
            src/Tests/ConnectionTest.cpp \
+           src/Tests/CppECGroupTest.cpp \
            src/Tests/Crypto.cpp \
            src/Tests/CSBulkRoundTest.cpp \
            src/Tests/CSOverlayTest.cpp \
@@ -65,6 +73,7 @@ SOURCES += ext/googletest/src/gtest-all.cc \
            src/Tests/HttpResponseTest.cpp \
            src/Tests/IdTest.cpp \
            src/Tests/IntegerTest.cpp \
+           src/Tests/IntegerGroupTest.cpp \
            src/Tests/KeyShareTest.cpp \
            src/Tests/LogTest.cpp \
            src/Tests/MainTest.cpp \
@@ -72,9 +81,11 @@ SOURCES += ext/googletest/src/gtest-all.cc \
            src/Tests/NeffShuffleRoundTest.cpp \
            src/Tests/NullRoundTest.cpp \
            src/Tests/OnionTest.cpp \
+           src/Tests/OpenECGroupTest.cpp \
            src/Tests/OverlayHelper.cpp \
            src/Tests/PackagersTest.cpp \
            src/Tests/PacketsTest.cpp \
+           src/Tests/PairingGroupTest.cpp \
            src/Tests/PeerReviewTest.cpp \
            src/Tests/RandomTest.cpp \
            src/Tests/RepeatingBulkRoundTest.cpp \

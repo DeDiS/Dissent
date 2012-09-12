@@ -118,6 +118,25 @@ namespace Tests {
     EXPECT_EQ(Integer(0), base.Pow(Integer(10), Integer(100)));
   }
 
+  TEST(Integer, CppModInverse)
+  {
+    for(int i=0; i<10; i++) {
+      Integer p = Integer::GetRandomInteger(1024, true);
+      Integer a = Integer::GetRandomInteger(0, p);
+      Integer inv = a.ModInverse(p);
+      Integer out = (a*inv)%p;
+
+      ASSERT_TRUE(a > 0);
+      ASSERT_TRUE(p > a);
+
+      qDebug() << "a" << a.GetByteArray().toHex();
+      qDebug() << "p" << p.GetByteArray().toHex();
+      qDebug() << "out" << out.GetByteArray().toHex();
+
+      ASSERT_EQ(Integer(1), out);
+    }
+  }
+  
   TEST(Integer, CppRandom)
   {
     CryptoFactory &cf = CryptoFactory::GetInstance();
@@ -135,16 +154,110 @@ namespace Tests {
     EXPECT_EQ(0x7f8f8f8f, test.GetInt32());
   }
 
-  TEST(Integer, MultiplicativeInverse)
+  TEST(Integer, ModInverse)
   {
     Integer mod = Integer::GetRandomInteger(1024);
     // mod should be prime to ensure (higher likelihood of) multiplicative inverse
-    mod = Integer::GetRandomInteger(0, mod, true);
-    Integer val = Integer::GetRandomInteger(0, mod);
-    Integer mi = val.MultiplicativeInverse(mod);
+    mod = Integer::GetRandomInteger(1024, mod, true);
+    Integer val = Integer::GetRandomInteger(1024, mod);
+    Integer mi = val.ModInverse(mod);
     Integer result = (val * mi) % mod;
     qDebug() << result.ToString() << (val < mod) << (mi < mod);
     EXPECT_EQ(result, 1);
+  }
+
+  TEST(Integer, OpenBasic)
+  {
+    CryptoFactory &cf = CryptoFactory::GetInstance();
+    CryptoFactory::LibraryName cname = cf.GetLibraryName();
+    cf.SetLibrary(CryptoFactory::OpenSSL);
+    IntegerBasicTest();
+    cf.SetLibrary(cname);
+  }
+
+  TEST(Integer, OpenNull)
+  {
+    CryptoFactory &cf = CryptoFactory::GetInstance();
+    CryptoFactory::LibraryName cname = cf.GetLibraryName();
+    cf.SetLibrary(CryptoFactory::OpenSSL);
+    IntegerTestNull();
+    cf.SetLibrary(cname);
+  }
+
+  TEST(Integer, OpenTestCopy)
+  {
+    CryptoFactory &cf = CryptoFactory::GetInstance();
+    CryptoFactory::LibraryName cname = cf.GetLibraryName();
+    cf.SetLibrary(CryptoFactory::OpenSSL);
+    IntegerTestCopy();
+    cf.SetLibrary(cname);
+  }
+
+  TEST(Integer, OpenInvalidString)
+  {
+    CryptoFactory &cf = CryptoFactory::GetInstance();
+    CryptoFactory::LibraryName cname = cf.GetLibraryName();
+    cf.SetLibrary(CryptoFactory::OpenSSL);
+    IntegerInvalidString();
+    cf.SetLibrary(cname);
+  }
+
+  TEST(Integer, OpenPow)
+  {
+    Integer base(10);
+    Integer exp(100);
+    EXPECT_EQ(exp, base.Pow(Integer(10), Integer(101)));
+    EXPECT_EQ(Integer(0), base.Pow(Integer(10), Integer(100)));
+
+    for(int i=0; i<10; i++) {
+      Integer p = Integer::GetRandomInteger(1024, true);
+      Integer a = Integer::GetRandomInteger(0, p);
+      Integer b = Integer::GetRandomInteger(0, p);
+      Integer e1 = Integer::GetRandomInteger(0, p);
+      Integer e2 = Integer::GetRandomInteger(0, p);
+
+
+      EXPECT_EQ(p.PowCascade(a, e1, b, e2), 
+          (a.Pow(e1, p) * b.Pow(e2, p))%p);
+
+      EXPECT_EQ(Integer(1), a.Pow(0, p));
+      EXPECT_EQ(a, a.Pow(1, p));
+    }
+  }
+
+  TEST(Integer, OpenModInverse)
+  {
+    for(int i=0; i<10; i++) {
+      Integer p = Integer::GetRandomInteger(1024, true);
+      Integer a = Integer::GetRandomInteger(0, p);
+
+      Integer na = a * Integer(-1);
+      ASSERT_EQ(na, a - (2*a));
+
+      ASSERT_EQ((a-p)%p, a);
+      ASSERT_EQ((a-(40*p))%p, a);
+
+      Integer inv = a.ModInverse(p);
+      Integer out = (a*inv)%p;
+
+      ASSERT_TRUE(a > 0);
+      ASSERT_TRUE(p > a);
+
+      qDebug() << "a" << a.GetByteArray().toHex();
+      qDebug() << "p" << p.GetByteArray().toHex();
+      qDebug() << "out" << out.GetByteArray().toHex();
+
+      ASSERT_EQ(Integer(1), out);
+    }
+  }
+  
+  TEST(Integer, OpenRandom)
+  {
+    CryptoFactory &cf = CryptoFactory::GetInstance();
+    CryptoFactory::LibraryName cname = cf.GetLibraryName();
+    cf.SetLibrary(CryptoFactory::OpenSSL);
+    IntegerRandom();
+    cf.SetLibrary(cname);
   }
 }
 }

@@ -1,0 +1,367 @@
+<html><head>
+<title>UC Berkeley Home IP Web Traces - 18 days</title></head><body>
+<!-- @(#) $Header: UCB.home-IP-HTTP.html,v 1.4 97/07/29 13:21:15 vern Exp $ (LBL)-->
+<h1>
+UC Berkeley Home IP Web Traces
+</h1>
+<dl>
+<dt>
+<b>Description</b>
+<dd>
+This dataset consists of 18 days' worth of HTTP traces gathered from the
+<a href="http://www.net.berkeley.edu/dcns/modems/hip/about_hip.html">Home
+IP</a> service offered by UC Berkeley to its students, faculty, and staff
+Home IP provides dial-up PPP/SLIP IP
+connectivity using 2.4 kb/s, 9.6 kb/s, 14.4 kb/s, or 28.8 kb/s wireline
+modems, or <a href="http://www.metricom.com/">Metricom Ricochet</a> (approximately
+20-30 kb/s) wireless modems.  These client traces were unobtrusively
+gathered through the use of a packet sniffing machine placed at the
+head-end of the Home IP modem bank; the tracing program used was a custom
+module written on top of the Internet Protocol Scanning Engine (IPSE)
+created by <a href="http://www.cs.berkeley.edu/~iang">Ian Goldberg</a>.
+Only traffic destined for port 80 was traced; all non-HTTP protocols and
+HTTP connections for other ports were excluded from these traces.
+
+<P>
+
+The traces contain the following information:
+<ul>
+     <li> a total of <B>9,244,728</B> references spanning the period from
+	  <b><samp>Friday, November 1st, 1996 at 15:18:59 PST</samp></b> through
+	  <b><samp>Tuesday, November 19th, 1996 at 05:52:03
+	  PST</samp></b>.  8,377 unique clients were seen in the traces.
+     <li> the time at which the client made the request
+     <li> the time at which the first byte of the server response was seen
+     <li> the time at which the last byte of the server response was seen
+     <li> the client IP address (suitably anonymized)
+     <li> the client port
+     <li> the server IP address (suitably anonymized)
+     <li> the server port (always 80 for these traces)
+     <li> the presence of the <code>no-cache</code>,
+	  <code>keep-alive</code>, <code>cache-control</code>,
+	  <code>if-modified-since</code>, and <code>unless</code> client
+	  headers.
+     <li> the presence of the <code>no-cache</code>,
+	  <code>cache-control</code>, <code>expires</code>, and
+	  <code>last-modified</code> server headers.
+     <li> the values of the client <code>if-modified-since</code>, the
+	  server <code>expires</code>, and the server
+	  <code>last-modified</code> headers, if present.
+     <li> the length of the response HTTP header
+     <li> the length of the response data
+     <li> the request URL (suitably anonymized)
+</ul>
+
+<dt>
+<b>Format</b>
+<dd>
+For the sake of storage efficiency, the (gzipped) traces are stored in a
+binary representation.  This
+<a href="ftp://ita.ee.lbl.gov/software/UCB-home-IP.tools.tar.gz">archive
+of tools</a>
+includes the following code to parse and manipulate the archives:
+
+<ul>
+     <li> <B>showtrace</b>: this program will print out a human readable
+	  ASCII representation of what is in the traces.  To use, type:
+	  <CENTER><CODE>gzcat &lt;tracefile&gt; | showtrace </CODE></CENTER>
+	  Take a look at the source file <CODE>showtrace.c</CODE> to see
+	  how you can use <CODE>logparse.[ch]</CODE> to write code that
+	  parses and manipulates the traces.  All times displayed are as
+	  reported by the <CODE>gettimeofday()</CODE> system call.
+	  <P>
+     <li> <B>anon_clients</b>: this is the program that we used to
+	  anonymize the traces.  I include this program under the principle
+	  that the anonymization used is strong enough that distributing
+	  the anonymization code cannot help anybody break the
+	  anonymization.
+	  <P>
+     <li> <B>timeconvert</B>: a program that accepts a calendar time
+	  (i.e. time in seconds since the Epoch, as reported by showtrace
+	  and as used in the trace filenames) and outputs the local time
+	  corresponding to that calendar time.	  
+</ul>
+
+<P>
+
+The <b>showtrace</b> tool will display lines in the following format:
+<pre>
+848278028:829593 848278028:893670 848278028:895350 23.240.8.98:1462
+207.36.205.194:80 2 8 4294967295 4294967295 835418853 170 844
+37 GET 9168504434183313441..gif HTTP/1.0
+</pre>
+
+<ul>
+  <li> 848278028:829593 is the time at which the client made the request
+  <li> 848278028:893670 is the time at which the first byte of the server
+       response was seen
+  <li> 848278028:895350 is the time at which the last byte of the server
+       response was seen
+  <li> 23.240.8.98:1462 is the anonymized client IP address and the client
+       port number
+  <li> 207.36.205.194:80 is the anonymized server IP address and the
+       server port number
+  <li> 2 is the decimal representation of the client headers bitfield
+  <li> 8 is the decimal representation of the server headers bitfield
+  <li> the first 4294967295 is the if-modified-since client header value
+       (note that 4294967295 is 0xFFFFFFFF, which means this header
+       value was not present for this entry)
+  <li> the second 4294967295 is the expires server header value
+       (again not present)
+  <li> 835418853 is the last-modified server header value
+  <li> 170 is the length of the HTTP response header
+  <li> 844 is the length of the response data
+  <li> 37 is the length of the anonymized request URL
+  <li> &quot;GET 9168504434183313441..gif HTTP/1.0&quot; is the
+       anonymized request URL.
+</ul>
+<P>
+The interpretation of the client and server header bitfields are as defined
+in the <b>logparse.h</b> header in the tools code.
+<P>
+
+The <a href="ftp://ita.ee.lbl.gov/software/UCB-home-IP.tools.tar.gz">tools
+code</a> has been tested on both Linux and
+Solaris.  The provided Makefile assumes Solaris - you may have to play with
+the LIBS definition for other platforms.  HPUX is a mess; I didn't even
+try, but it should be possible to get these tools to work with little
+effort.  If you do, please let me know what you did so that I can make your
+changes available to the world.
+<P>
+
+<dt>
+<b>Measurement</b>
+<dd>
+The Home IP population gains IP connectivity using PPP or SLIP across their
+2.4 kb/s, 9.6 kb/s, 14.4kb/s or 28.8kb/s wireline modem, or their
+(approximately) 20-30kb/s wireless Metricom Ricochet modem.  There are a
+total of roughly 600 modems available via the Home IP bank.  All traffic
+from these modems ends up feeding over a single 10Mb/s shared Ethernet
+segment, on which we placed a network monitoring computer (a Pentium Pro
+200Mhz running Linux 2.0.27).  The monitor was running the IPSE user-level
+packet scanning engine and a custom-written HTTP module that reconstructed
+HTTP connections from the gathered IP packets <i>on-the-fly</i> and emitted
+an unanonymized trace file.  Each trace file was then anonymized and
+transmitted to our research workstations for further postprocessing and
+analysis.
+
+<P>
+The trace gathering engine was brought down and restarted approximately every 4 hours
+(for administrative and address-space-growth reasons).  This implies that
+there are two weaknesses in these traces that you should be aware of:
+<ol>
+     <li> any connection active when the engine was brought down will have
+	  a possibly incorrect timestamp for the last byte seen from the
+	  server, and a possibly incorrect reported size.  We estimate that
+	  no more than 150 such entries (out of roughly 90000-100000) are
+	  misreported for each 4 hour period.
+	  <p>
+     <li> any connection that was forged in the very small time window
+	  (about 300 milliseconds) between when the engine was shut down
+	  and restarted will not appear in the logs.  We estimate that no
+	  more than 30 such drops occur for each 4 hour period.
+</ol>
+<P>
+The packet capture tool reported no packet drops.  Considering that a
+Pentium Pro 200MHz was used to capture the traces on a 10 Mb/s Ethernet
+segment, it is virtually certain that no trace drops besides those
+mentioned above occurred.  There may be periods of uncharacteristically low
+activity in the traces - these correspond to network outages from
+Berkeley's ISP, rather than trace failures.
+<P>
+The traces do contain entries for requests issued by the client but
+that weren't completed (because, for instance, the user pressed the STOP
+button and the TCP connection was shut down before the request completed).
+Unknown timestamps in the traces contain the value 0xFFFFFFFF
+(reported by showtrace as 4294967295), and
+incomplete requests contain header and data length values that report as
+much header/data was seen.
+<P>
+The trace data is sorted by completion time (i.e. the time at which the
+last bye of the server response was seen, or the time at which the
+connection was dropped).  However, because of inaccuracies and apparent time
+travel in the Linux system clock, some trace entries appear
+slightly out of order.
+<P>
+All timestamps within the traces are as reported by the gettimeofday()
+system call, so these timestamps ostensibly have microsecond resolution.
+
+<br><br>
+<dt>
+<b>Privacy</b>
+<dd>
+To maintain the privacy of each individual Home IP user, we have stripped
+identity information out of the traces through a post-processing phase.
+Because it is very trivial to identify a user based solely on the pages
+that the user has visited, we were forced to anonymize the URL and
+destination IP address of each web request as well as the source IP
+address.  All anonymization was done using a keyed MD5 hash of the data (32
+bits for client and server IP addresses, 64 bits for URLs).  <B>We
+ourselves do not know the key used to salt the MD5 hash</B>, so don't
+bother asking us for it.  Similarly, don't bother asking us for
+unanonymized traces.
+
+<P> In order to preserve <i>some</i> information about the URLs, the
+post-processed URLs have the following format:
+<P>
+<CENTER><B><CODE>COMMAND URLHASH.[flags][.suffix] [HTTPVERS]</CODE></B></CENTER>
+<P>
+where:
+<ul>
+     <li> <B><CODE>COMMAND</CODE></B> is one of <CODE>GET</CODE>,
+	  <CODE>HEAD</CODE>, <CODE>POST</CODE>, or <CODE>PUT</CODE>,
+	  <P>
+     <li> <B><CODE>URLHASH</CODE></B> is the string representation of the
+	  64-bit MD5 hash of the URL,
+	  <P>
+     <li> <B><CODE>flags</CODE></B> contains the character <B>q</B> to
+	  indicate that a question mark was seen in the URL, and the
+	  character <B>c</B> to indicate that the string <B>CGI</B> or
+	  <B>cgi</B> was seen in the URL,
+	  <P>
+     <li> <B><CODE>suffix</CODE></B> is the filename suffix, if present, and
+	  <P>
+     <li> <B><CODE>HTTPVERS</CODE></B> is the HTTP version field of the
+	  HTTP command issued by the client, and is one of
+	  <ul>
+	       <li> HTTP/1.0
+	       <li> HTTP/1.1
+	       <li> the NULL string (indicating HTTP/0.9).
+	  </ul>
+	  To our knowledge, however, no HTTP 1.1 requests were observed
+	  during the tracing period.
+</ul>
+<P>
+Here are some examples of URLs contained in the traces:
+
+<ul>
+     <li> <B><CODE>GET 8252631242092696791.q.map HTTP/1.0</CODE></B> - the
+	  client issued a GET request, the URL contained a question mark,
+	  the URL ended in the suffix .map, and HTTP/1.0 was used by the
+	  client.  An example of a request that may generate this
+	  anonymized URL is <CODE>GET /foo.map?BAR=BAZ HTTP/1.0</CODE>.
+	  <P>
+     <li> <B><CODE>POST 36782605103285618862.c HTTP/1.0</CODE></B> - the
+	  client issued a POST, the URL contained the substring CGI or cgi,
+	  the URL did not end with a dotted suffix, and HTTP/1.0 was used
+	  by the client.  An example of a request that may generate this
+	  anonymized URL is <CODE>POST /cgi-bin/foo HTTP/1.0</CODE>.
+	  <P>
+     <li> <B><CODE>GET 103551731373256697..gif HTTP/1.0</CODE></B> - the
+	  client issued a GET request, the URL contained neither the
+	  substring [CGI|cgi] nor a question mark, the filename ended
+	  with the .gif suffix, and HTTP/1.0 was used.  An example of a
+	  request that may generate this anonymized URL is
+	  <CODE>GET /image.gif HTTP/1.0</CODE>.
+	  <P>
+     <li> <B><CODE>GET 41438582632480924518. HTTP/1.0</CODE></B> - the
+	  client issued a GET request, the URL contained neither the
+	  substring [CGI|cgi] nor a question mark, the filename didn't end
+	  with a dotted suffix, and HTTP/1.0 was used.  An example of a
+	  request that may generate this anonymized URL is
+	  <CODE>GET /foo HTTP/1.0</CODE>.
+</ul>
+
+<p>
+
+Privacy was the firstmost concern during this trace gathering experiment -
+UC Berkeley and the CS department consider the privacy of the student body
+to be paramount, and whenever we had the choice of putting more information
+in these published logs at the cost sacrificing the privacy of the traced
+users, we have invariably chosen to maintain the users' privacy at the cost
+of losing this information.  It is our hope that someday the web protocols
+and servers will become secure enough to make a tracing effort of the kind
+we have done impossible.
+<dt>
+<P>
+<b>Acknowledgements</b>
+<dd>
+
+Steven D. Gribble contributed the traces to the ITA.  He also maintains
+<a href="http://www.cs.berkeley.edu/~gribble/traces/index.html">the official UC Berkeley page</a> dedicated to this tracing effort.
+
+<P>
+For inquiries, contact
+<a href="http://www.cs.berkeley.edu/~gribble">Steve Gribble</a> at <i><a
+href="mailto:gribble@cs.berkeley.edu">gribble@cs.berkeley.edu</a></i>.
+
+<P>
+<i>These traces, documentation, and associated trace tools were created by
+Steve Gribble with the assistance of Armando Fox, Ian Goldberg, Eric
+Brewer, and Cliff Frost.</i>
+<dt>
+<P>
+<b>Restrictions</b>
+<dd>
+Copyright (C) 1996-1997 by the Regents of the University of California.
+<P>
+IN NO EVENT SHALL THE AUTHORS OR DISTRIBUTORS BE LIABLE TO ANY PARTY FOR
+DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY DERIVATIVES THEREOF,
+EVEN IF THE AUTHORS HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+<P> 
+THE AUTHORS AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. THIS SOFTWARE IS
+PROVIDED ON AN "AS IS" BASIS, AND THE AUTHORS AND DISTRIBUTORS HAVE NO
+OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+MODIFICATIONS.
+<P>
+You have permission to use and redistribute these traces freely, as long as
+this Copyright and Disclaimer is distributed unmodified.  If you publish
+any results based on these traces, please send us a copy of this publication
+(in electronic or print form) and give the following reference or
+attribution in your publication:
+<P>
+<blockquote>
+Steven D. Gribble, &quot;UC Berkeley Home IP HTTP Traces&quot;, 
+July 1997.  Available at http://www.acm.org/sigcomm/ITA/.
+</blockquote>
+<dt>
+<b>Distribution</b>
+<dd>
+The web traces have been split into the following 4 files:
+
+<ul>
+     <li> <a href="ftp://ita.ee.lbl.gov/traces/UCB-home-IP-846890339-847313219.tr.gz">UCB-home-IP-846890339-847313219.tr.gz</a>
+	  (102 MB gzip compressed; 253 MB uncompressed):<BR>
+	  from <b><samp>Fri Nov  1 15:18:59 1996</samp></b> through
+	  <b><samp>Wed Nov  6 12:46:59 1996</samp></b>,
+	  2,599,049 requests, 6037 unique clients seen.
+     <li> <a
+	  href="ftp://ita.ee.lbl.gov/traces/UCB-home-IP-847313219-847601221.tr.gz">UCB-home-IP-847313219-847601221.tr.gz</a>
+	  (67 MB gzip compressed; 166 MB uncompressed):<BR>
+	  from <b><samp>Wed Nov  6 12:46:59 1996</samp></b> through
+	  <b><samp>Sat Nov  9 20:47:01 1996</samp></b>,
+	  1,703,835 requests, 5257 unique clients seen.
+     <li> <a
+	  href="ftp://ita.ee.lbl.gov/traces/UCB-home-IP-847601221-848004424.tr.gz">UCB-home-IP-847601221-848004424.tr.gz</a>
+	  (97 MB gzip compressed; 241 MB uncompressed):<BR>
+	  from <b><samp>Sat Nov  9 20:47:01 1996</samp></b> through
+	  <b><samp>Thu Nov 14 12:47:04 1996</samp></b>,
+	  2,472,954 requests, 5924 unique clients seen.
+     <li> <a
+	  href="ftp://ita.ee.lbl.gov/traces/UCB-home-IP-848004424-848409417.tr.gz">UCB-home-IP-848004424-848409417.tr.gz</a>
+	  (97 MB gzip compressed; 240 MB uncompressed):<BR>
+	  from <b><samp>Thu Nov 14 12:47:04 1996</samp></b> through
+	  <b><samp>Tue Nov 19 05:16:57 1996</samp></b>,
+	  2,468,890 requests, 5780 unique clients seen.
+</ul>
+
+We have also made the following small 4 hour snippet of trace data
+available in case you want to evaluate the traces without downloading such
+a large data set:
+
+<ul>
+     <li> <a
+	  href="ftp://ita.ee.lbl.gov/traces/UCB-home-IP-848278026-848292426.tr.gz">UCB-home-IP-848278026-848292426.tr.gz</a>
+	  (3.7 MB gzip compressed; 9.3 MB uncompressed):<BR>
+	  from <b><samp>Sun Nov 17 16:47:06 1996</samp></b> through
+	  <b><samp>Sun Nov 17 20:47:06 1996</samp></b>,
+	  95,768 requests, 916 unique clients seen.
+</ul>
+</dl>
+<br><br>
+Up to
+<a href=http:../traces.html> Traces In The Internet Traffic Archive</a>.
+</body></html>

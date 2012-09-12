@@ -1,4 +1,5 @@
 #include "Anonymity/BaseBulkRound.hpp"
+#include "Anonymity/BlogDropRound.hpp"
 #include "Anonymity/BulkRound.hpp"
 #include "Anonymity/CSBulkRound.hpp"
 #include "Anonymity/RepeatingBulkRound.hpp"
@@ -19,6 +20,7 @@
 #include "Node.hpp"
 
 using Dissent::Anonymity::BulkRound;
+using Dissent::Anonymity::BlogDropRound;
 using Dissent::Anonymity::CSBulkRound;
 using Dissent::Anonymity::NeffKeyShuffle;
 using Dissent::Anonymity::NullRound;
@@ -65,6 +67,9 @@ namespace Applications {
         break;
       case CSBULK:
         cr = &TCreateBulkRound<CSBulkRound, NeffKeyShuffle>;
+        break;
+      case BLOGDROP:
+        cr = &TCreateRound<BlogDropRound>;
         break;
       default:
         qFatal("Invalid session type");

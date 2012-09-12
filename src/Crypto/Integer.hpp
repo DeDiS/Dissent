@@ -59,6 +59,11 @@ namespace Crypto {
       }
 
       /**
+       * Destructor
+       */
+      ~Integer() {}
+
+      /**
        * returns a random integer data
        * @param bit_count the amount of bits in the integer
        * @param prime if the integer should be prime 
@@ -136,9 +141,13 @@ namespace Crypto {
         return Integer(_data->Divide(divisor._data.constData()));
       }
 
-      inline Integer Modulus(const Integer &mod) const
+      /**
+       * Modulo operator, produces a new Integer
+       * @param modulus the modulus to use
+       */
+      inline Integer Modulo(const Integer &mod) const
       {
-        return Integer(_data->Modulus(mod._data.constData()));
+        return Integer(_data->Modulo(mod._data.constData()));
       }
 
       /**
@@ -151,9 +160,40 @@ namespace Crypto {
         return Integer(_data->Pow(pow._data.constData(), mod._data.constData()));
       }
 
-      Integer MultiplicativeInverse(const Integer &mod) const
+      /**
+       * Cascade exponentiation modulo n
+       * For integer n, compute ((x1^e1 * x2^e2) mod n)
+       * This can be much faster than the naive way.
+       * @param x1 first base
+       * @param e1 first exponent
+       * @param x2 second base
+       * @param e2 second exponent
+       */
+      Integer PowCascade(const Integer &x1, const Integer &e1,
+          const Integer &x2, const Integer &e2) const
       {
-        return Integer(_data->MultiplicativeInverse(mod._data.constData()));
+        return Integer(_data->PowCascade(x1._data.constData(), e1._data.constData(),
+            x2._data.constData(), e2._data.constData()));
+      }
+
+      /**
+       * Multiplication modulo
+       * @param other multiplicand
+       * @param mod modulus
+       */
+      Integer MultiplyMod(const Integer &other, const Integer &mod) const
+      {
+        return Integer(_data->MultiplyMod(other._data.constData(),
+              mod._data.constData()));
+      }
+
+      /**
+       * Compute x such that ax == 1 mod p
+       * @param mod inverse modulo this group
+       */
+      Integer ModInverse(const Integer &mod) const
+      {
+        return Integer(_data->ModInverse(mod._data.constData()));
       }
 
       /**
@@ -315,7 +355,7 @@ namespace Crypto {
 
   inline Integer operator%(const Integer &value, const Integer &mod)
   {
-    return value.Modulus(mod);
+    return value.Modulo(mod);
   }
 
   /**

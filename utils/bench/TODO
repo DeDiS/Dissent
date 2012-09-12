@@ -1,0 +1,19 @@
+
+== Microbenchmarks == (over N, L, security parameter) 
+* message size
+* proof generate 
+* proof verify
+--> Compare with XOR
+--> Show asymptotic performance (huge N, etc)
+
+== Macrobenchmarks == (over N, over % nodes sending)
+* (chat-room) tweet-sized messages
+* 1MB PDF, infrequent
+
+== Scheduling ==
+* change length of slots
+* dynamic slot opening and closing
+(using DC-net XOR with single bit)
+
+== Accountability ==
+* time to first byte over # of attackers

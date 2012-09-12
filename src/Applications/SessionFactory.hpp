@@ -31,6 +31,7 @@ namespace Applications {
           "repeatingbulk",
           "csbulk",
           "tolerantbulk",
+          "blogdrop",
         };
         return sessions[id];
       }
@@ -43,6 +44,7 @@ namespace Applications {
         REPEATING_BULK,
         CSBULK,
         TOLERANT_BULK,
+        BLOGDROP,
       };
 
       static SessionType GetSessionType(const QString &stype)
@@ -55,11 +57,16 @@ namespace Applications {
           SessionType type, AuthFactory::AuthType auth_type,
           const QSharedPointer<KeyShare> &public_keys);
 
+      /**
+       * Create a BlogDropRound
+       */
+      static void CreateBlogDropRoundSession(Node *node, const Id &session_id);
+
     private:
       static QHash<QString, SessionType> BuildStringToTypeHash()
       {
         QHash<QString, SessionType> hash;
-        for(int idx = NULL_ROUND; idx <= TOLERANT_BULK; idx++) {
+        for(int idx = NULL_ROUND; idx <= BLOGDROP; idx++) {
           hash[SessionNames(idx)] = static_cast<SessionType>(idx);
         }
         return hash;

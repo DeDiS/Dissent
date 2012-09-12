@@ -10,4 +10,6 @@ test
 docs/html
 test.log
 libdissent.so*
+/bench
+bench.log
 keygen

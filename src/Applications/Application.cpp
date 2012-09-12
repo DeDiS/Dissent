@@ -44,12 +44,24 @@ int main(int argc, char **argv)
   QList<QSharedPointer<Node> > nodes;
 
   QSharedPointer<ISink> default_sink(new DummySink());
-  QSharedPointer<ISink> app_sink = default_sink;
+  QSharedPointer<ISink> app_sink;
 
-  if(settings.Console) {
+  QScopedPointer<WebServer> ws;
+  QScopedPointer<EntryTunnel> tun_entry;
+  QScopedPointer<ExitTunnel> tun_exit;
+
+  qDebug() << "Starting with leader" << settings.LeaderId;
+
+  if(settings.Mode == Settings::Mode_Null) {
+    app_sink = default_sink;
+  } else if(settings.Mode == Settings::Mode_Console) {
     app_sink = QSharedPointer<CommandLine>(new CommandLine(nodes));
-  } else if(settings.WebServer || settings.EntryTunnel || settings.ExitTunnel) {
+  } else if(settings.Mode == Settings::Mode_WebServer 
+      || settings.Mode == Settings::Mode_EntryTunnel
+      || settings.Mode == Settings::Mode_ExitTunnel) {
     app_sink = QSharedPointer<SignalSink>(new SignalSink());
+  } else {
+    qCritical() << "Unknown mode type";
   }
 
   QSharedPointer<AsymmetricKey> key;
@@ -80,6 +92,8 @@ int main(int argc, char **argv)
       QByteArray id = local_id.GetByteArray();
       key = QSharedPointer<AsymmetricKey>(lib->GeneratePrivateKey(id));
       dh = QSharedPointer<DiffieHellman>(lib->GenerateDiffieHellman(id));
+    } else {
+      qCritical() << "Only DemoMode supported at this time;";
     }
 
     nodes.append(create(PrivateIdentity(local_id, key, key, dh, super_peer),
@@ -88,12 +102,13 @@ int main(int argc, char **argv)
     local[0] = AddressFactory::GetInstance().CreateAny(local[0].GetType());
   }
 
-  QScopedPointer<WebServer> ws;
-  QScopedPointer<EntryTunnel> tun_entry;
-  QScopedPointer<ExitTunnel> tun_exit;
 
-  if(settings.Console) {
+  QSharedPointer<DefaultNetwork> net(new DefaultNetwork(nodes[0]->GetOverlay()->GetConnectionManager(), 
+        nodes[0]->GetOverlay()->GetRpcHandler()));
+  if(settings.Mode == Settings::Mode_Console) {
     QSharedPointer<CommandLine> cl = app_sink.dynamicCast<CommandLine>();
+    if(!cl) qCritical() << "Could not cast QSharedPointer";
+
     QObject::connect(&qca, SIGNAL(aboutToQuit()), cl.data(), SLOT(Stop()));
     cl->Start();
   } else {

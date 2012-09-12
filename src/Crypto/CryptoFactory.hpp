@@ -17,6 +17,7 @@ namespace Crypto {
       enum LibraryName {
         CryptoPP,
         CryptoPPDsa,
+        OpenSSL,
         Null
       };
 

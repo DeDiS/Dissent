@@ -1,0 +1,37 @@
+THE PBC WRAPPER CLASSES LIBARY
+
+Ben Lynn has developed the pairing-based cryptography (PBC) library,
+which implements the important primitives for pairing-based
+cryptography. The PBC library is developed in C over the gmp
+library. For more information about the PBC library, please refer to the
+PBC webpage.
+
+I recently developed C++ wrapper classes for the PBC library for our
+distributed key generation project. Here, I am making available a
+library of these classes (released under the GNU Public License) for
+anybody to use.
+
+Note that this C++ library does not modify the underling PBC library. My
+sole aim is to make the C++ development based on the PBC library more
+comfortable. As a salient feature of these wrapper classes, to improve
+the code readability, we have included operator overloading.
+
+USAGE: 
+This version is compatible with the current version 0.5.6 of the PBC
+library.
+
+- First, install the PBC library as described here and set the library
+path as described here. After that, decompress this wrapper class
+library and install it by calling make inside the PBCWrapper-x.y.z
+directory.
+
+- While using this wrapper classes library, please use the header (*.h)
+files to obtain the class declarations. Most of these declarations
+should be self-explanatory. For sample code, please see Testing.cc
+included in the PBCWrapper-x.y.z directory.
+
+- Also, I did not write C++ functions for parameter generation. Use the
+excutables or the source codes in the gen subdirectory of the pbc-x.y.z
+directory to create a parameter file.
+
+------------------------------------------------------------------------

@@ -5,21 +5,43 @@
 TEMPLATE = lib
 TARGET = dissent
 DEPENDPATH += 
-INCLUDEPATH += ext/joyent-http-parser/ ext/qt-json/ src/ ext/qxt
+INCLUDEPATH += ext/joyent-http-parser/ ext/qt-json/ src/ ext/qxt ext/PBCWrapper-0.8.0
 CONFIG += qt debug
 QT = core network
 DEFINES += "VERSION=3"
-QMAKE_CXXFLAGS += -Werror
-QMAKE_CFLAGS += -Werror
+QMAKE_CXXFLAGS += -Werror 
+QMAKE_CFLAGS += -Werror 
+
+# Comment out to disable use
+# of pairing-based crypto library 
+# TODO: Put in ifdefs to remove
+# PBC code
+USE_PBC = "true"
+
+!isEmpty(USE_PBC) {
+  DEFINES += "USE_PBC"
+  LIBS += -lpbc -lcrypto -lgmp
+  message( Using PBC library )
+}
 
 # Input
 LIBS += -lcryptopp 
 HEADERS += ext/joyent-http-parser/http_parser.h \
            ext/qt-json/json.h \
+           ext/PBCWrapper-0.8.0/G1.h \
+           ext/PBCWrapper-0.8.0/G2.h \
+           ext/PBCWrapper-0.8.0/G.h \
+           ext/PBCWrapper-0.8.0/GT.h \
+           ext/PBCWrapper-0.8.0/Pairing.h \
+           ext/PBCWrapper-0.8.0/PBCExceptions.h \
+           ext/PBCWrapper-0.8.0/PBC.h \
+           ext/PBCWrapper-0.8.0/PPPairing.h \
+           ext/PBCWrapper-0.8.0/Zr.h \
            ext/qxt/qxtcommandoptions.h \
            ext/qxt/qxtglobal.h \
            src/Dissent.hpp \
            src/Anonymity/BaseBulkRound.hpp \
+           src/Anonymity/BlogDropRound.hpp \
            src/Anonymity/BulkRound.hpp \
            src/Anonymity/CSBulkRound.hpp \
            src/Anonymity/Log.hpp \
@@ -90,8 +112,47 @@ HEADERS += ext/joyent-http-parser/http_parser.h \
            src/Crypto/NullPrivateKey.hpp \
            src/Crypto/Library.hpp \
            src/Crypto/OnionEncryptor.hpp \
+           src/Crypto/OpenIntegerData.hpp \
+           src/Crypto/OpenLibrary.hpp \
            src/Crypto/ThreadedOnionEncryptor.hpp \
            src/Crypto/Serialization.hpp \
+           src/Crypto/AbstractGroup/AbstractGroup.hpp \
+           src/Crypto/AbstractGroup/ByteElementData.hpp \
+           src/Crypto/AbstractGroup/ByteGroup.hpp \
+           src/Crypto/AbstractGroup/CppECElementData.hpp \
+           src/Crypto/AbstractGroup/CppECGroup.hpp \
+           src/Crypto/AbstractGroup/Element.hpp \
+           src/Crypto/AbstractGroup/ElementData.hpp \
+           src/Crypto/AbstractGroup/IntegerElementData.hpp \
+           src/Crypto/AbstractGroup/IntegerGroup.hpp \
+           src/Crypto/AbstractGroup/OpenECElementData.hpp \
+           src/Crypto/AbstractGroup/OpenECGroup.hpp \
+           src/Crypto/AbstractGroup/PairingElementData.hpp \
+           src/Crypto/AbstractGroup/PairingGroup.hpp \
+           src/Crypto/AbstractGroup/PairingG1Group.hpp \
+           src/Crypto/AbstractGroup/PairingGTGroup.hpp \
+           src/Crypto/BlogDrop/BlogDropAuthor.hpp \
+           src/Crypto/BlogDrop/BlogDropClient.hpp \
+           src/Crypto/BlogDrop/BlogDropServer.hpp \
+           src/Crypto/BlogDrop/BlogDropUtils.hpp \
+           src/Crypto/BlogDrop/ChangingGenClientCiphertext.hpp \
+           src/Crypto/BlogDrop/ChangingGenServerCiphertext.hpp \
+           src/Crypto/BlogDrop/CiphertextFactory.hpp \
+           src/Crypto/BlogDrop/ClientCiphertext.hpp \
+           src/Crypto/BlogDrop/ElGamalClientCiphertext.hpp \
+           src/Crypto/BlogDrop/ElGamalServerCiphertext.hpp \
+           src/Crypto/BlogDrop/HashingGenClientCiphertext.hpp \
+           src/Crypto/BlogDrop/HashingGenServerCiphertext.hpp \
+           src/Crypto/BlogDrop/PairingClientCiphertext.hpp \
+           src/Crypto/BlogDrop/PairingServerCiphertext.hpp \
+           src/Crypto/BlogDrop/Parameters.hpp \
+           src/Crypto/BlogDrop/Plaintext.hpp \
+           src/Crypto/BlogDrop/PrivateKey.hpp \
+           src/Crypto/BlogDrop/PublicKey.hpp \
+           src/Crypto/BlogDrop/PublicKeySet.hpp \
+           src/Crypto/BlogDrop/ServerCiphertext.hpp \
+           src/Crypto/BlogDrop/XorClientCiphertext.hpp \
+           src/Crypto/BlogDrop/XorServerCiphertext.hpp \
            src/Identity/Authentication/IAuthenticate.hpp \
            src/Identity/Authentication/IAuthenticator.hpp \
            src/Identity/Authentication/LRSAuthenticate.hpp \
@@ -188,8 +249,16 @@ HEADERS += ext/joyent-http-parser/http_parser.h \
 
 SOURCES += ext/joyent-http-parser/http_parser.c \
            ext/qt-json/json.cpp \
+           ext/PBCWrapper-0.8.0/G1.cc \
+           ext/PBCWrapper-0.8.0/G2.cc \
+           ext/PBCWrapper-0.8.0/G.cc \
+           ext/PBCWrapper-0.8.0/GT.cc \
+           ext/PBCWrapper-0.8.0/Pairing.cc \
+           ext/PBCWrapper-0.8.0/PPPairing.cc \
+           ext/PBCWrapper-0.8.0/Zr.cc \
            ext/qxt/qxtcommandoptions.cpp \
            src/Anonymity/BaseBulkRound.cpp \
+           src/Anonymity/BlogDropRound.cpp \
            src/Anonymity/BulkRound.cpp \
            src/Anonymity/CSBulkRound.cpp \
            src/Anonymity/Log.cpp \
@@ -246,6 +315,33 @@ SOURCES += ext/joyent-http-parser/http_parser.c \
            src/Crypto/NullPrivateKey.cpp \
            src/Crypto/OnionEncryptor.cpp \
            src/Crypto/ThreadedOnionEncryptor.cpp \
+           src/Crypto/AbstractGroup/ByteGroup.cpp \
+           src/Crypto/AbstractGroup/IntegerGroup.cpp \
+           src/Crypto/AbstractGroup/CppECGroup.cpp \
+           src/Crypto/AbstractGroup/OpenECGroup.cpp \
+           src/Crypto/AbstractGroup/PairingGroup.cpp \
+           src/Crypto/AbstractGroup/PairingG1Group.cpp \
+           src/Crypto/AbstractGroup/PairingGTGroup.cpp \
+           src/Crypto/BlogDrop/BlogDropAuthor.cpp \
+           src/Crypto/BlogDrop/BlogDropClient.cpp \
+           src/Crypto/BlogDrop/BlogDropServer.cpp \
+           src/Crypto/BlogDrop/BlogDropUtils.cpp \
+           src/Crypto/BlogDrop/ChangingGenClientCiphertext.cpp \
+           src/Crypto/BlogDrop/ChangingGenServerCiphertext.cpp \
+           src/Crypto/BlogDrop/CiphertextFactory.cpp \
+           src/Crypto/BlogDrop/ClientCiphertext.cpp \
+           src/Crypto/BlogDrop/ElGamalClientCiphertext.cpp \
+           src/Crypto/BlogDrop/ElGamalServerCiphertext.cpp \
+           src/Crypto/BlogDrop/HashingGenClientCiphertext.cpp \
+           src/Crypto/BlogDrop/HashingGenServerCiphertext.cpp \
+           src/Crypto/BlogDrop/PairingClientCiphertext.cpp \
+           src/Crypto/BlogDrop/PairingServerCiphertext.cpp \
+           src/Crypto/BlogDrop/Parameters.cpp \
+           src/Crypto/BlogDrop/Plaintext.cpp \
+           src/Crypto/BlogDrop/PrivateKey.cpp \
+           src/Crypto/BlogDrop/PublicKey.cpp \
+           src/Crypto/BlogDrop/PublicKeySet.cpp \
+           src/Crypto/BlogDrop/ServerCiphertext.cpp \
            src/Identity/Group.cpp \
            src/Identity/Authentication/LRSAuthenticate.cpp \
            src/Identity/Authentication/LRSAuthenticator.cpp \

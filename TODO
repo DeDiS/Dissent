@@ -1,3 +1,10 @@
+BlogDrop (23 August 2012)
+- Allow switch BlogDropRound parameters without recompile
+- Implement accountability in BlogDropRound
+  for Bryan's hashing generator version
+
+-----------------
+
 Anonymity
 - Design a dynamic group -- handles new connections, disconnections, and blame
 - Need some structure to communicate group status / change
@@ -18,7 +25,6 @@ Crypto
 - DH ZKP shouldn't have a serialized message type, should just return the various components independently and the lower level app should do the serialization
 - Remove Null implementations of non-slow things (DH is a good candidate)
 - Move XOR and MessageRandomizer into Utils
-- Remove Trusted and replace with Tolerant
 - Use abstract types in API for more comprehensive type-checking (DhPublicKey instead of QByteArray)
 
 Messaging

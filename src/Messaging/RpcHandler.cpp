@@ -92,8 +92,8 @@ namespace Messaging {
     if(cb.isNull()) {
       qDebug() << "RpcHandler: Request: No such method: " << method <<
         ", from: " << request.GetFrom()->ToString();
-      SendFailedResponse(request, Response::InvalidMethod,
-          QString("No such method: " + method));
+      //SendFailedResponse(request, Response::InvalidMethod,
+      //    QString("No such method: " + method));
       return;
     }
 

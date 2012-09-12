@@ -58,7 +58,8 @@ namespace Tests {
     Library *lib = CryptoFactory::GetInstance().GetLibrary();
     QScopedPointer<Dissent::Utils::Random> rand(lib->GetRandomNumberGenerator());
 
-    QByteArray msg(128, 0);
+    // Reducing message size so that it can fit in a BlogDrop group element
+    QByteArray msg(TEST_MESSAGE_LENGTH, 0);
     rand->GenerateBlock(msg);
     nodes[sender]->session->Send(msg);
 
@@ -112,7 +113,7 @@ namespace Tests {
     Library *lib = CryptoFactory::GetInstance().GetLibrary();
     QScopedPointer<Dissent::Utils::Random> rand(lib->GetRandomNumberGenerator());
 
-    QByteArray msg(128, 0);
+    QByteArray msg(TEST_MESSAGE_LENGTH, 0);
     rand->GenerateBlock(msg);
     nodes[sender]->session->Send(msg);
 
@@ -163,7 +164,7 @@ namespace Tests {
     Library *lib = CryptoFactory::GetInstance().GetLibrary();
     QScopedPointer<Dissent::Utils::Random> rand(lib->GetRandomNumberGenerator());
 
-    QByteArray msg(128, 0);
+    QByteArray msg(TEST_MESSAGE_LENGTH, 0);
     rand->GenerateBlock(msg);
     nodes[sender0]->session->Send(msg);
 
@@ -231,7 +232,7 @@ namespace Tests {
     Library *lib = CryptoFactory::GetInstance().GetLibrary();
     QScopedPointer<Dissent::Utils::Random> rand(lib->GetRandomNumberGenerator());
 
-    QByteArray msg(128, 0);
+    QByteArray msg(TEST_MESSAGE_LENGTH, 0);
     rand->GenerateBlock(msg);
     nodes[sender0]->session->Send(msg);
     QByteArray first = msg;
@@ -383,7 +384,7 @@ namespace Tests {
     Library *lib = CryptoFactory::GetInstance().GetLibrary();
     QScopedPointer<Dissent::Utils::Random> rand(lib->GetRandomNumberGenerator());
 
-    QByteArray msg(128, 0);
+    QByteArray msg(TEST_MESSAGE_LENGTH, 0);
     rand->GenerateBlock(msg);
     nodes[sender]->session->Send(msg);
 
@@ -450,7 +451,7 @@ namespace Tests {
     Library *lib = CryptoFactory::GetInstance().GetLibrary();
     QScopedPointer<Dissent::Utils::Random> rand(lib->GetRandomNumberGenerator());
 
-    QByteArray msg(128, 0);
+    QByteArray msg(TEST_MESSAGE_LENGTH, 0);
     rand->GenerateBlock(msg);
     nodes[sender]->session->Send(msg);
 
@@ -606,7 +607,7 @@ namespace Tests {
     Library *lib = CryptoFactory::GetInstance().GetLibrary();
     QScopedPointer<Dissent::Utils::Random> rand(lib->GetRandomNumberGenerator());
 
-    QByteArray msg(128, 0);
+    QByteArray msg(TEST_MESSAGE_LENGTH, 0);
     rand->GenerateBlock(msg);
     nodes[sender]->session->Send(msg);
 
@@ -701,7 +702,7 @@ namespace Tests {
     Library *lib = CryptoFactory::GetInstance().GetLibrary();
     QScopedPointer<Dissent::Utils::Random> rand(lib->GetRandomNumberGenerator());
 
-    QByteArray msg(128, 0);
+    QByteArray msg(TEST_MESSAGE_LENGTH, 0);
     rand->GenerateBlock(msg);
     nodes[sender]->session->Send(msg);
 
